@@ -9,6 +9,7 @@ use Livewire\WithFileUploads;
 use Ssh521\KoreanBbs\Models\Board;
 use Ssh521\KoreanBbs\Models\BbsFile;
 use Ssh521\KoreanBbs\Models\Post;
+use Ssh521\KoreanBbs\SkinResolver;
 
 class PostForm extends Component
 {
@@ -121,7 +122,7 @@ class PostForm extends Component
 
     public function render()
     {
-        return view('korean-bbs::board.form')
+        return view(SkinResolver::resolve($this->board->skin, 'form'))
             ->layout('korean-bbs::layouts.bbs');
     }
 }

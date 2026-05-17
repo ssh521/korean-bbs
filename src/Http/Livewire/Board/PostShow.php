@@ -8,6 +8,7 @@ use Ssh521\KoreanBbs\Models\Board;
 use Ssh521\KoreanBbs\Models\Comment;
 use Ssh521\KoreanBbs\Models\Like;
 use Ssh521\KoreanBbs\Models\Post;
+use Ssh521\KoreanBbs\SkinResolver;
 
 class PostShow extends Component
 {
@@ -127,7 +128,7 @@ class PostShow extends Component
             ->orderBy('created_at')
             ->get();
 
-        return view('korean-bbs::board.show', compact('comments'))
+        return view(SkinResolver::resolve($this->board->skin, 'show'), compact('comments'))
             ->layout('korean-bbs::layouts.bbs');
     }
 }

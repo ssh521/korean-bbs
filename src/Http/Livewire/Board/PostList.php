@@ -55,7 +55,7 @@ class PostList extends Component
 
         $posts = $query->latest()->paginate($perPage);
 
-        $view = SkinResolver::resolve($skin);
+        $view = SkinResolver::resolve($skin, 'list');
 
         return view($view, compact('posts', 'notices'))
             ->layout('korean-bbs::layouts.bbs');
