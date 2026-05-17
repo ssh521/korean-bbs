@@ -61,7 +61,7 @@ return [
     | default: 기본 스킨 키 (현재 미사용 — 잘못된 키는 예외 발생).
     */
     'skins' => [
-        'allowed' => ['list', 'gallery'],
+        'allowed' => ['list', 'gallery', 'custom'],
         'default' => 'list',
     ],
 
