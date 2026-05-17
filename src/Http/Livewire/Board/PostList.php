@@ -7,6 +7,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Ssh521\KoreanBbs\Models\Board;
 use Ssh521\KoreanBbs\Models\Post;
+use Ssh521\KoreanBbs\SkinResolver;
 
 class PostList extends Component
 {
@@ -32,7 +33,8 @@ class PostList extends Component
 
     public function render()
     {
-        $perPage = $this->board->isGallery()
+        $skin = $this->board->skin;
+        $perPage = $skin === 'gallery'
             ? config('korean-bbs.defaults.gallery_per_page', 12)
             : $this->board->posts_per_page;
 
@@ -53,7 +55,7 @@ class PostList extends Component
 
         $posts = $query->latest()->paginate($perPage);
 
-        $view = $this->board->isGallery() ? 'korean-bbs::board.gallery' : 'korean-bbs::board.list';
+        $view = SkinResolver::resolve($skin);
 
         return view($view, compact('posts', 'notices'))
             ->layout('korean-bbs::layouts.bbs');

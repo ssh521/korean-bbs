@@ -38,11 +38,12 @@
             {{-- 타입 / 그룹 --}}
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">게시판 타입</label>
-                    <select wire:model="type"
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
-                        <option value="list">일반형 (목록)</option>
-                        <option value="gallery">갤러리형 (그리드)</option>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">스킨</label>
+                    <select wire:model="skin"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-blue-400">
+                        @foreach($skins as $skinKey)
+                            <option value="{{ $skinKey }}">{{ $skinKey }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div>

@@ -11,7 +11,7 @@ class Board extends Model
     protected $table = 'bbs_boards';
 
     protected $fillable = [
-        'group_id', 'name', 'slug', 'description', 'type',
+        'group_id', 'name', 'slug', 'description', 'skin',
         'write_level', 'comment_level', 'file_level',
         'posts_per_page', 'allow_secret', 'use_comment',
         'use_like', 'use_file', 'is_active', 'order',
@@ -35,8 +35,4 @@ class Board extends Model
         return $this->hasMany(Post::class, 'board_id');
     }
 
-    public function isGallery(): bool
-    {
-        return $this->type === 'gallery';
-    }
 }

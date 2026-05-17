@@ -33,9 +33,9 @@
                         <td class="px-4 py-3 text-sm font-medium text-gray-800">{{ $board->name }}</td>
                         <td class="px-4 py-3 text-sm text-gray-500 font-mono">{{ $board->slug }}</td>
                         <td class="px-4 py-3 text-center">
-                            <span class="text-xs px-2 py-0.5 rounded-full
-                                {{ $board->type === 'gallery' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600' }}">
-                                {{ $board->type === 'gallery' ? '갤러리' : '일반' }}
+                            <span class="text-xs px-2 py-0.5 rounded-full font-mono
+                                {{ $board->skin === 'gallery' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600' }}">
+                                {{ $board->skin }}
                             </span>
                         </td>
                         <td class="px-4 py-3 text-center text-xs text-gray-500">{{ $board->group?->name ?? '-' }}</td>

@@ -13,7 +13,7 @@ class BoardForm extends Component
     public string $name = '';
     public string $slug = '';
     public string $description = '';
-    public string $type = 'list';
+    public string $skin = 'list';
     public int $groupId = 0;
     public int $writeLevel = 0;
     public int $commentLevel = 0;
@@ -33,7 +33,7 @@ class BoardForm extends Component
             $this->name         = $board->name;
             $this->slug         = $board->slug;
             $this->description  = $board->description ?? '';
-            $this->type         = $board->type;
+            $this->skin         = $board->skin;
             $this->groupId      = $board->group_id ?? 0;
             $this->writeLevel   = $board->write_level;
             $this->commentLevel = $board->comment_level;
@@ -53,7 +53,7 @@ class BoardForm extends Component
         $this->validate([
             'name'         => 'required|string|max:50',
             'slug'         => 'required|string|max:50|alpha_dash|unique:bbs_boards,slug' . ($this->board ? ',' . $this->board->id : ''),
-            'type'         => 'required|in:list,gallery',
+            'skin'         => 'required|in:' . implode(',', config('korean-bbs.skins.allowed', ['list', 'gallery'])),
             'postsPerPage' => 'required|integer|min:5|max:100',
         ]);
 
@@ -61,7 +61,7 @@ class BoardForm extends Component
             'name'          => $this->name,
             'slug'          => $this->slug,
             'description'   => $this->description ?: null,
-            'type'          => $this->type,
+            'skin'          => $this->skin,
             'group_id'      => $this->groupId ?: null,
             'write_level'   => $this->writeLevel,
             'comment_level' => $this->commentLevel,
@@ -89,8 +89,9 @@ class BoardForm extends Component
     public function render()
     {
         $groups = BoardGroup::orderBy('order')->get();
+        $skins = config('korean-bbs.skins.allowed', ['list', 'gallery']);
 
-        return view('korean-bbs::admin.boards.form', compact('groups'))
+        return view('korean-bbs::admin.boards.form', compact('groups', 'skins'))
             ->layout('korean-bbs::layouts.admin');
     }
 }

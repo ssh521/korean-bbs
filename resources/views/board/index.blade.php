@@ -16,7 +16,7 @@
                                 <div class="text-xs text-gray-500 mt-1 truncate">{{ $board->description }}</div>
                             @endif
                             <div class="text-xs text-gray-400 mt-2">
-                                {{ $board->type === 'gallery' ? '갤러리' : '일반' }}
+                                {{ $board->skin }}
                                 · {{ number_format($board->posts_count ?? 0) }}개
                             </div>
                         </a>
