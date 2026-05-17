@@ -58,6 +58,6 @@ class PostList extends Component
         $view = SkinResolver::resolve($skin, 'list');
 
         return view($view, compact('posts', 'notices'))
-            ->layout('korean-bbs::layouts.bbs');
+            ->layout(config('korean-bbs.layout'));
     }
 }

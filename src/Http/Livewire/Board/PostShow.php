@@ -129,6 +129,6 @@ class PostShow extends Component
             ->get();
 
         return view(SkinResolver::resolve($this->board->skin, 'show'), compact('comments'))
-            ->layout('korean-bbs::layouts.bbs');
+            ->layout(config('korean-bbs.layout'));
     }
 }

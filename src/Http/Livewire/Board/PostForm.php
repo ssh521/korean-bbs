@@ -123,6 +123,6 @@ class PostForm extends Component
     public function render()
     {
         return view(SkinResolver::resolve($this->board->skin, 'form'))
-            ->layout('korean-bbs::layouts.bbs');
+            ->layout(config('korean-bbs.layout'));
     }
 }
