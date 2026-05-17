@@ -1,0 +1,38 @@
+{
+    "name": "ssh521/korean-bbs",
+    "description": "한국형 BBS (게시판) Laravel 패키지 - 그누보드/KBoard 스타일",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ssh521"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "livewire/livewire": "^3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ssh521\\KoreanBbs\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ssh521\\KoreanBbs\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ssh521\\KoreanBbs\\KoreanBbsServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

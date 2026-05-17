@@ -1,0 +1,35 @@
+# Composer
+/vendor/
+
+# Local PHPUnit overrides (ship phpunit.xml.dist if needed)
+/phpunit.xml
+
+# PHPUnit / coverage
+/.phpunit.cache
+/phpunit.result.cache
+/.phpunit.result.cache
+/coverage/
+/clover.xml
+
+# Local env (testbench / scratch apps)
+.env
+.env.*
+!.env.example
+
+# Tool caches
+.php_cs.cache
+.php-cs-fixer.cache
+.phpstan/cache/
+/psalm/cache/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
