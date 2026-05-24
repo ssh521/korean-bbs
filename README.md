@@ -40,6 +40,19 @@ php artisan migrate
 php artisan storage:link
 ```
 
+테스트용 샘플 게시판/게시글/댓글이 필요하면 패키지 시더를 실행합니다.
+
+```bash
+php artisan db:seed --class="Ssh521\\KoreanBbs\\Database\\Seeders\\KoreanBbsTestSeeder"
+```
+
+앱의 `database/seeders`로 복사해 수정하고 싶다면 다음 명령을 사용합니다.
+
+```bash
+php artisan vendor:publish --tag=korean-bbs-seeders
+php artisan db:seed --class="Database\\Seeders\\KoreanBbsTestSeeder"
+```
+
 ### 환경 변수 (관리자)
 
 `config` 퍼블리시 후 `.env`에 설정합니다.

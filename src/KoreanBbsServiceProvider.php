@@ -85,5 +85,9 @@ class KoreanBbsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views/board/skins' => resource_path('views/vendor/korean-bbs/board/skins'),
         ], 'korean-bbs-skins');
+
+        $this->publishes([
+            __DIR__ . '/../database/seeders/KoreanBbsTestSeeder.php' => database_path('seeders/KoreanBbsTestSeeder.php'),
+        ], 'korean-bbs-seeders');
     }
 }
