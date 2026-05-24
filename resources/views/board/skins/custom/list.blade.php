@@ -1,4 +1,4 @@
-<div>
+<div class="{{ $this->board->widthClass() }}" style="{{ $this->board->widthStyle() }}">
     {{-- 게시판 헤더 --}}
     <div class="flex items-center justify-between mb-6">
         <div>

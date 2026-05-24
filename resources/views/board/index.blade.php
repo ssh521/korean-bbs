@@ -1,4 +1,4 @@
-<div>
+<div class="max-w-6xl mx-auto">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">게시판</h2>
 
     @if($groups->isNotEmpty())

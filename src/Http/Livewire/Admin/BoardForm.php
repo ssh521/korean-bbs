@@ -14,6 +14,7 @@ class BoardForm extends Component
     public string $slug = '';
     public string $description = '';
     public string $skin = 'list';
+    public string $width = '';
     public int $groupId = 0;
     public int $writeLevel = 0;
     public int $commentLevel = 0;
@@ -34,6 +35,7 @@ class BoardForm extends Component
             $this->slug         = $board->slug;
             $this->description  = $board->description ?? '';
             $this->skin         = $board->skin;
+            $this->width        = $board->width ?? '';
             $this->groupId      = $board->group_id ?? 0;
             $this->writeLevel   = $board->write_level;
             $this->commentLevel = $board->comment_level;
@@ -54,7 +56,10 @@ class BoardForm extends Component
             'name'         => 'required|string|max:50',
             'slug'         => 'required|string|max:50|alpha_dash|unique:bbs_boards,slug' . ($this->board ? ',' . $this->board->id : ''),
             'skin'         => 'required|in:' . implode(',', config('korean-bbs.skins.allowed', ['list', 'gallery'])),
+            'width'        => 'nullable|string|max:100|regex:/^[A-Za-z0-9\\s_:\\.\\-\\[\\]\\/\\%]+$/',
             'postsPerPage' => 'required|integer|min:5|max:100',
+        ], [
+            'width.regex' => '게시판 width는 TailwindCSS 클래스 또는 100%, 600px 같은 CSS width 값으로 입력해주세요.',
         ]);
 
         $data = [
@@ -62,6 +67,7 @@ class BoardForm extends Component
             'slug'          => $this->slug,
             'description'   => $this->description ?: null,
             'skin'          => $this->skin,
+            'width'         => trim($this->width) ?: null,
             'group_id'      => $this->groupId ?: null,
             'write_level'   => $this->writeLevel,
             'comment_level' => $this->commentLevel,

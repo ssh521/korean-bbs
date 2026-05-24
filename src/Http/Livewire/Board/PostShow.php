@@ -129,6 +129,15 @@ class PostShow extends Component
             ->get();
 
         return view(SkinResolver::resolve($this->board->skin, 'show'), compact('comments'))
-            ->layout(config('korean-bbs.layout'));
+            ->layout(config('korean-bbs.layout'), [
+                'title' => $this->post->title,
+                'board' => $this->board,
+                'post' => $this->post,
+                'breadcrumbs' => [
+                    ['label' => '게시판', 'url' => route('bbs.index')],
+                    ['label' => $this->board->name, 'url' => route('bbs.posts.index', $this->board->slug)],
+                    ['label' => $this->post->title],
+                ],
+            ]);
     }
 }

@@ -20,6 +20,11 @@ class BoardIndex extends Component
             ->get();
 
         return view('korean-bbs::board.index', compact('groups', 'noGroupBoards'))
-            ->layout('korean-bbs::layouts.bbs');
+            ->layout(config('korean-bbs.layout'), [
+                'title' => '게시판',
+                'breadcrumbs' => [
+                    ['label' => '게시판'],
+                ],
+            ]);
     }
 }

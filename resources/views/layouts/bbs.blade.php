@@ -30,7 +30,33 @@
     </div>
 </header>
 
-<main class="max-w-6xl mx-auto px-4 py-6">
+<main class="w-full px-4 py-6">
+    @isset($breadcrumbs)
+        @php
+            $breadcrumbClass = isset($board) ? $board->widthClass() : 'max-w-6xl mx-auto';
+            $breadcrumbStyle = isset($board) ? $board->widthStyle() : null;
+        @endphp
+        <nav class="{{ $breadcrumbClass }} mb-4 flex flex-wrap items-center gap-2 text-sm text-gray-500"
+             style="{{ $breadcrumbStyle }}"
+             aria-label="breadcrumb">
+            @foreach($breadcrumbs as $breadcrumb)
+                @if(!$loop->first)
+                    <span class="text-gray-300">/</span>
+                @endif
+
+                @if(!empty($breadcrumb['url']) && !$loop->last)
+                    <a href="{{ $breadcrumb['url'] }}" class="hover:text-blue-600">
+                        {{ $breadcrumb['label'] }}
+                    </a>
+                @else
+                    <span class="{{ $loop->last ? 'text-gray-700 font-medium' : '' }}">
+                        {{ $breadcrumb['label'] }}
+                    </span>
+                @endif
+            @endforeach
+        </nav>
+    @endisset
+
     {{ $slot }}
 </main>
 

@@ -1,13 +1,4 @@
-<div>
-    {{-- 상단 네비게이션 --}}
-    <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
-        <a href="{{ route('bbs.index') }}" class="hover:text-blue-600">게시판</a>
-        <span>/</span>
-        <a href="{{ route('bbs.posts.index', $this->board->slug) }}" class="hover:text-blue-600">{{ $this->board->name }}</a>
-        <span>/</span>
-        <span>{{ $this->post ? '수정' : '글쓰기' }}</span>
-    </div>
-
+<div class="{{ $this->board->widthClass() }}" style="{{ $this->board->widthStyle() }}">
     <div class="bg-white border border-gray-200 rounded-xl p-6">
         <h2 class="text-lg font-bold text-gray-800 mb-6">
             {{ $this->post ? '게시글 수정' : '게시글 작성' }}

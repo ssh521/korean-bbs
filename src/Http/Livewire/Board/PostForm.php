@@ -122,7 +122,18 @@ class PostForm extends Component
 
     public function render()
     {
+        $label = $this->post ? '게시글 수정' : '게시글 작성';
+
         return view(SkinResolver::resolve($this->board->skin, 'form'))
-            ->layout(config('korean-bbs.layout'));
+            ->layout(config('korean-bbs.layout'), [
+                'title' => "{$this->board->name} - {$label}",
+                'board' => $this->board,
+                'post' => $this->post,
+                'breadcrumbs' => [
+                    ['label' => '게시판', 'url' => route('bbs.index')],
+                    ['label' => $this->board->name, 'url' => route('bbs.posts.index', $this->board->slug)],
+                    ['label' => $label],
+                ],
+            ]);
     }
 }

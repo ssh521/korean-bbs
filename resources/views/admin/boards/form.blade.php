@@ -35,6 +35,21 @@
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
             </div>
 
+            {{-- 게시판 너비 --}}
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">게시판 width</label>
+                <input type="text" wire:model="width"
+                       placeholder="예: max-w-4xl, w-full, 100%, 600px"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-blue-400 @error('width') border-red-400 @enderror">
+                <p class="text-xs text-gray-500 mt-1">
+                    TailwindCSS 클래스 또는 CSS width 값을 입력할 수 있습니다. 예전 방식처럼 100%, 600px도 사용할 수 있습니다.
+                </p>
+                <p class="text-xs text-gray-400 mt-1">
+                    예: max-w-6xl, max-w-screen-lg, w-full, w-[720px], 100%, 600px, 48rem
+                </p>
+                @error('width') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+
             {{-- 타입 / 그룹 --}}
             <div class="grid grid-cols-2 gap-4">
                 <div>
