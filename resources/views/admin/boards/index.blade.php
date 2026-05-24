@@ -48,7 +48,11 @@
                         </td>
                         <td class="px-4 py-3 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('bbs.admin.boards.edit', $board->id) }}"
+                                <a href="{{ route('bbs.posts.index', $board->slug) }}" target="_blank"
+                                    class="text-xs text-gray-400 hover:text-gray-600 px-2 py-1 border border-gray-200 rounded hover:bg-gray-50">
+                                     보기
+                                 </a>
+                                 <a href="{{ route('bbs.admin.boards.edit', $board->id) }}"
                                    class="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 border border-blue-300 rounded hover:bg-blue-50">
                                     수정
                                 </a>
@@ -56,10 +60,6 @@
                                         class="text-xs text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 rounded hover:bg-red-50">
                                     삭제
                                 </button>
-                                <a href="{{ route('bbs.posts.index', $board->slug) }}" target="_blank"
-                                   class="text-xs text-gray-400 hover:text-gray-600 px-2 py-1 border border-gray-200 rounded hover:bg-gray-50">
-                                    보기
-                                </a>
                             </div>
                         </td>
                     </tr>
