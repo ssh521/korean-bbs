@@ -1,5 +1,5 @@
 <div class="{{ $this->board->widthClass() }}" style="{{ $this->board->widthStyle() }}">
-    <div class="bg-white border border-gray-200 rounded-xl p-6">
+    <form wire:submit.prevent="save" class="bg-white border border-gray-200 rounded-xl p-6">
         <h2 class="text-lg font-bold text-gray-800 mb-6">
             {{ $this->post ? '게시글 수정' : '게시글 작성' }}
         </h2>
@@ -79,12 +79,12 @@
                class="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
                 취소
             </a>
-            <button wire:click="save"
+            <button type="submit"
                     wire:loading.attr="disabled"
                     class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-6 py-2 rounded-lg transition disabled:opacity-50">
                 <span wire:loading.remove>{{ $this->post ? '수정 완료' : '등록' }}</span>
                 <span wire:loading>처리중...</span>
             </button>
         </div>
-    </div>
+    </form>
 </div>

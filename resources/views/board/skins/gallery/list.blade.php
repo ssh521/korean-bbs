@@ -7,7 +7,7 @@
                 <p class="text-sm text-gray-500 mt-1">{{ $this->board->description }}</p>
             @endif
         </div>
-        <a href="{{ route('bbs.posts.create', $this->board->slug) }}"
+        <a href="{{ route('bbs.posts.create', [$this->board->slug]) }}"
            class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
             글쓰기
         </a>
