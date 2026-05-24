@@ -39,6 +39,7 @@ class PostForm extends Component
             $this->content = $post->content;
             $this->isNotice = $post->is_notice;
             $this->isSecret = $post->is_secret;
+            $this->authorName = $post->author_name ?? '';
         }
     }
 
@@ -51,12 +52,20 @@ class PostForm extends Component
             'uploadedFiles.*' => 'file|max:' . config('korean-bbs.upload.max_size'),
         ];
 
-        if (!auth()->check()) {
+        if (!auth()->check() && $this->post) {
+            $rules['authorName']     = 'required|string|max:20';
+            $rules['authorPassword'] = 'required|string|min:4|max:20';
+        } elseif (!auth()->check()) {
             $rules['authorName']     = 'required|string|max:20';
             $rules['authorPassword'] = 'required|string|min:4|max:20';
         }
 
         $this->validate($rules);
+
+        if (!auth()->check() && $this->post && !Hash::check($this->authorPassword, $this->post->getRawOriginal('author_password'))) {
+            $this->addError('authorPassword', '비밀번호가 올바르지 않습니다.');
+            return;
+        }
 
         $this->content = ContentSanitizer::clean($this->content);
 
@@ -77,7 +86,10 @@ class PostForm extends Component
             $data['user_id'] = auth()->id();
         } else {
             $data['author_name']     = $this->authorName;
-            $data['author_password'] = Hash::make($this->authorPassword);
+
+            if (!$this->post) {
+                $data['author_password'] = Hash::make($this->authorPassword);
+            }
         }
 
         if ($this->post) {
