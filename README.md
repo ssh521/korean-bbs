@@ -82,15 +82,75 @@ BBS_ADMIN_NAME=관리자
 | `prefix` | 웹·관리자 URL 접두사 |
 | `upload` | 디스크, 경로, 최대 크기(KB), 허용 확장자, 썸네일 크기 |
 | `defaults` | 페이지당 글·댓글·갤러리 개수 |
-| `skins` | 허용 스킨 키 등 (`list`, `gallery`, `custom` 등) |
+| `skins` | 허용 스킨 키, 기본 스킨, 커스텀 스킨 경로 |
+
+게시판별 공개 화면 폭은 관리자 게시판 설정의 `게시판 width`에서 지정할 수 있습니다.
+TailwindCSS 클래스와 CSS width 값을 모두 지원합니다.
+
+| 입력 예시 | 설명 |
+|----------|------|
+| `max-w-6xl` | Tailwind 최대 폭 |
+| `w-full` | 부모 영역 전체 폭 |
+| `w-[720px]` | Tailwind arbitrary value |
+| `100%` | 예전 스타일의 CSS width |
+| `600px` | 고정 픽셀 폭 |
+| `48rem` | rem 기반 폭 |
 
 ## 뷰 커스터마이징
+
+전체 패키지 뷰를 publish하려면 다음 명령을 사용합니다.
 
 ```bash
 php artisan vendor:publish --tag=korean-bbs-views
 ```
 
 Blade는 `resources/views/vendor/korean-bbs/`에 복사됩니다.
+
+게시판 스킨만 publish하려면 다음 명령을 사용합니다.
+
+```bash
+php artisan vendor:publish --tag=korean-bbs-skins
+```
+
+스킨은 기본적으로 `resources/views/vendor/korean-bbs/board/skins`에 복사됩니다.
+경로를 바꾸고 싶다면 `config/korean-bbs.php`에서 `skins.path`를 수정하세요.
+
+```php
+'skins' => [
+    'allowed' => ['list', 'gallery', 'custom', 'my-skin'],
+    'default' => 'list',
+    'path' => resource_path('views/bbs/skins'),
+],
+```
+
+각 스킨은 `{skin}/list.blade.php`, `{skin}/show.blade.php`, `{skin}/form.blade.php` 구조를 사용합니다.
+
+## 레이아웃 props
+
+공개 게시판 화면은 layout에 다음 데이터를 전달합니다. `config('korean-bbs.layout')`을 앱 레이아웃으로 바꾼 경우에도 동일한 변수를 사용할 수 있습니다.
+
+| 변수 | 설명 |
+|------|------|
+| `$title` | 현재 페이지 제목 |
+| `$breadcrumbs` | Breadcrumb 항목 배열 (`label`, 선택 `url`) |
+| `$board` | 현재 게시판 모델. 게시판 목록 화면에서는 없음 |
+| `$post` | 현재 게시글 모델. 상세/수정 화면에서만 전달 |
+
+예시:
+
+```blade
+@isset($breadcrumbs)
+    <nav>
+        @foreach($breadcrumbs as $breadcrumb)
+            @if(!empty($breadcrumb['url']))
+                <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['label'] }}</a>
+            @else
+                <span>{{ $breadcrumb['label'] }}</span>
+            @endif
+        @endforeach
+    </nav>
+@endisset
+```
 
 ## 기술 스택
 
