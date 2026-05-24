@@ -6,10 +6,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Ssh521\KoreanBbs\EditorResolver;
 use Ssh521\KoreanBbs\Models\Board;
 use Ssh521\KoreanBbs\Models\BbsFile;
 use Ssh521\KoreanBbs\Models\Post;
 use Ssh521\KoreanBbs\SkinResolver;
+use Ssh521\KoreanBbs\Support\ContentSanitizer;
 
 class PostForm extends Component
 {
@@ -55,6 +57,13 @@ class PostForm extends Component
         }
 
         $this->validate($rules);
+
+        $this->content = ContentSanitizer::clean($this->content);
+
+        if (trim(strip_tags($this->content)) === '') {
+            $this->addError('content', '내용을 입력하세요.');
+            return;
+        }
 
         $data = [
             'board_id'  => $this->board->id,
@@ -125,6 +134,7 @@ class PostForm extends Component
         $label = $this->post ? '게시글 수정' : '게시글 작성';
 
         return view(SkinResolver::resolve($this->board->skin, 'form'))
+            ->with('editorView', EditorResolver::resolve($this->board->skin))
             ->layout(config('korean-bbs.layout'), [
                 'title' => "{$this->board->name} - {$label}",
                 'board' => $this->board,

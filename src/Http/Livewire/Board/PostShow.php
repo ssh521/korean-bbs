@@ -4,6 +4,7 @@ namespace Ssh521\KoreanBbs\Http\Livewire\Board;
 
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Ssh521\KoreanBbs\EditorResolver;
 use Ssh521\KoreanBbs\Models\Board;
 use Ssh521\KoreanBbs\Models\Comment;
 use Ssh521\KoreanBbs\Models\Like;
@@ -128,7 +129,10 @@ class PostShow extends Component
             ->orderBy('created_at')
             ->get();
 
-        return view(SkinResolver::resolve($this->board->skin, 'show'), compact('comments'))
+        return view(SkinResolver::resolve($this->board->skin, 'show'), [
+            'comments' => $comments,
+            'contentView' => EditorResolver::contentView(),
+        ])
             ->layout(config('korean-bbs.layout'), [
                 'title' => $this->post->title,
                 'board' => $this->board,

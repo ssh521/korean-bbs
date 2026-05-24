@@ -50,10 +50,7 @@
         {{-- 내용 --}}
         <div class="mb-4">
             <label class="block text-xs font-medium text-gray-600 mb-1">내용 <span class="text-red-500">*</span></label>
-            <textarea wire:model="content"
-                      rows="12"
-                      placeholder="내용을 입력하세요"
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm resize-y focus:outline-none focus:ring-1 focus:ring-blue-400 @error('content') border-red-400 @enderror"></textarea>
+            @include($editorView ?? 'korean-bbs::editors.textarea')
             @error('content') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
@@ -81,9 +78,10 @@
             </a>
             <button type="submit"
                     wire:loading.attr="disabled"
+                    wire:target="save"
                     class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-6 py-2 rounded-lg transition disabled:opacity-50">
-                <span wire:loading.remove>{{ $this->post ? '수정 완료' : '등록' }}</span>
-                <span wire:loading>처리중...</span>
+                <span wire:loading.remove wire:target="save">{{ $this->post ? '수정 완료' : '등록' }}</span>
+                <span wire:loading wire:target="save">처리중...</span>
             </button>
         </div>
     </form>

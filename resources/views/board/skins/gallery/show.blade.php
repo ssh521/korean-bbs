@@ -64,7 +64,7 @@
 
         {{-- 본문 내용 --}}
         <div class="px-6 py-6 prose max-w-none text-gray-800 leading-relaxed min-h-32">
-            {!! nl2br(e($this->post->content)) !!}
+            @include($contentView ?? 'korean-bbs::editors.content', ['content' => $this->post->content])
         </div>
 
         {{-- 이미지 미리보기 --}}
