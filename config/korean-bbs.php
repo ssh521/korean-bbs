@@ -69,10 +69,13 @@ return [
     |--------------------------------------------------------------------------
     | allowed: 허용된 스킨 키 목록. 앱에서 config를 오버라이드해 추가 가능.
     | default: 기본 스킨 키 (현재 미사용 — 잘못된 키는 예외 발생).
+    | path: 앱에서 publish하거나 직접 만든 게시판 스킨 경로.
+    |       {path}/{skin}/{list|show|form}.blade.php 형태로 탐색합니다.
     */
     'skins' => [
         'allowed' => ['list', 'gallery', 'custom'],
         'default' => 'list',
+        'path' => resource_path('views/vendor/korean-bbs/board/skins'),
     ],
 
 ];

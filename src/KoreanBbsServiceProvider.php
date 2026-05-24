@@ -81,5 +81,9 @@ class KoreanBbsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/korean-bbs'),
         ], 'korean-bbs-views');
+
+        $this->publishes([
+            __DIR__ . '/../resources/views/board/skins' => resource_path('views/vendor/korean-bbs/board/skins'),
+        ], 'korean-bbs-skins');
     }
 }
