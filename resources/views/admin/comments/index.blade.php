@@ -40,6 +40,7 @@
                         <td class="px-4 py-3 text-center text-xs text-gray-400">{{ $comment->created_at->format('Y.m.d H:i') }}</td>
                         <td class="px-4 py-3 text-center">
                             <button wire:click="delete({{ $comment->id }})"
+                                    wire:confirm="'{{ Str::limit($comment->content, 30) }}' 댓글을 정말 삭제하시겠습니까? 복구할 수 없습니다."
                                     class="text-xs text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 rounded hover:bg-red-50">
                                 삭제
                             </button>

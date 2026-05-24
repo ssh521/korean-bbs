@@ -2,7 +2,6 @@
 
 namespace Ssh521\KoreanBbs\Http\Livewire\Admin;
 
-use Livewire\Attributes\Confirm;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Ssh521\KoreanBbs\Models\Comment;
@@ -18,7 +17,6 @@ class CommentManager extends Component
         $this->resetPage();
     }
 
-    #[Confirm('이 댓글을 삭제하시겠습니까?')]
     public function delete(int $id): void
     {
         Comment::findOrFail($id)->delete();

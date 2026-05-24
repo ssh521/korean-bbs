@@ -3,6 +3,7 @@
         <h2 class="text-2xl font-bold text-gray-800">게시글 관리</h2>
         @if(!empty($selected))
             <button wire:click="deleteSelected"
+                    wire:confirm="선택한 게시글 {{ count($selected) }}개를 정말 삭제하시겠습니까? 관련 댓글과 첨부 데이터가 함께 삭제될 수 있으며 복구할 수 없습니다."
                     class="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg transition">
                 선택 삭제 ({{ count($selected) }})
             </button>
@@ -54,6 +55,7 @@
                         <td class="px-4 py-3 text-center text-xs text-gray-400">{{ $post->created_at->format('Y.m.d') }}</td>
                         <td class="px-4 py-3 text-center">
                             <button wire:click="delete({{ $post->id }})"
+                                    wire:confirm="'{{ $post->title }}' 게시글을 정말 삭제하시겠습니까? 관련 댓글과 첨부 데이터가 함께 삭제될 수 있으며 복구할 수 없습니다."
                                     class="text-xs text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 rounded hover:bg-red-50">
                                 삭제
                             </button>

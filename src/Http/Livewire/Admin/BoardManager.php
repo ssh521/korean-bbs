@@ -2,7 +2,6 @@
 
 namespace Ssh521\KoreanBbs\Http\Livewire\Admin;
 
-use Livewire\Attributes\Confirm;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Ssh521\KoreanBbs\Models\Board;
@@ -18,7 +17,6 @@ class BoardManager extends Component
         $this->resetPage();
     }
 
-    #[Confirm('이 게시판을 삭제하시겠습니까? 관련 게시글이 모두 삭제됩니다.')]
     public function delete(int $id): void
     {
         Board::findOrFail($id)->delete();

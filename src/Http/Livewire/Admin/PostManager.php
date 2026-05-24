@@ -2,7 +2,6 @@
 
 namespace Ssh521\KoreanBbs\Http\Livewire\Admin;
 
-use Livewire\Attributes\Confirm;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Ssh521\KoreanBbs\Models\Post;
@@ -37,7 +36,6 @@ class PostManager extends Component
             ->toArray();
     }
 
-    #[Confirm('선택한 게시글을 삭제하시겠습니까?')]
     public function deleteSelected(): void
     {
         Post::whereIn('id', $this->selected)->delete();
@@ -46,7 +44,6 @@ class PostManager extends Component
         session()->flash('success', '선택한 게시글이 삭제되었습니다.');
     }
 
-    #[Confirm('이 게시글을 삭제하시겠습니까?')]
     public function delete(int $id): void
     {
         Post::findOrFail($id)->delete();

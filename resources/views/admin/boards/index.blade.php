@@ -57,6 +57,7 @@
                                     수정
                                 </a>
                                 <button wire:click="delete({{ $board->id }})"
+                                        wire:confirm="'{{ $board->name }}' 게시판을 정말 삭제하시겠습니까? 관련 게시글 {{ number_format($board->posts_count) }}개가 함께 삭제되며 복구할 수 없습니다."
                                         class="text-xs text-red-500 hover:text-red-700 px-2 py-1 border border-red-300 rounded hover:bg-red-50">
                                     삭제
                                 </button>
