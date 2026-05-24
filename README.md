@@ -96,6 +96,7 @@ BBS_ADMIN_NAME=관리자
 | `upload` | 디스크, 경로, 최대 크기(KB), 허용 확장자, 썸네일 크기 |
 | `defaults` | 페이지당 글·댓글·갤러리 개수 |
 | `skins` | 허용 스킨 키, 기본 스킨, 커스텀 스킨 경로 |
+| `editors` | 기본 글쓰기 에디터, 스킨별 에디터, 커스텀 에디터 경로 |
 
 게시판별 공개 화면 폭은 관리자 게시판 설정의 `게시판 width`에서 지정할 수 있습니다.
 TailwindCSS 클래스와 CSS width 값을 모두 지원합니다.
@@ -137,6 +138,33 @@ php artisan vendor:publish --tag=korean-bbs-skins
 ```
 
 각 스킨은 `{skin}/list.blade.php`, `{skin}/show.blade.php`, `{skin}/form.blade.php` 구조를 사용합니다.
+
+## 글쓰기 에디터
+
+기본 글쓰기 에디터는 무료 Trix 에디터입니다. 패키지는 `trix`, `quill`, `tinymce`, `textarea`를 기본 제공합니다. 단순 textarea로 되돌리거나 스킨별로 다른 에디터를 쓰고 싶다면 `config/korean-bbs.php`의 `editors`를 수정합니다.
+
+```php
+'editors' => [
+    'default' => 'trix',
+    'allow_source_view' => true,
+    'skins' => [
+        'gallery' => 'quill',
+        'custom' => 'my-editor',
+    ],
+    'path' => resource_path('views/vendor/korean-bbs/editors'),
+],
+```
+
+기본 에디터 키:
+
+| 키 | 설명 |
+|----|------|
+| `trix` | 기본값. 가볍고 게시판 글쓰기에 적합 |
+| `quill` | 무료 BSD 라이선스 기반 에디터. 툴바 커스터마이징이 쉬움 |
+| `tinymce` | GPL self-host 방식으로 로드하는 고기능 에디터 |
+| `textarea` | 자바스크립트 에디터 없이 순수 textarea 사용 |
+
+커스텀 에디터는 `php artisan vendor:publish --tag=korean-bbs-editors`로 기본 에디터 뷰를 복사한 뒤, `resources/views/vendor/korean-bbs/editors/my-editor.blade.php`처럼 추가합니다. 에디터 Blade는 Livewire의 `content` 속성과 동기화되면 됩니다.
 
 ## 레이아웃 props
 

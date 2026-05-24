@@ -78,4 +78,30 @@ return [
         'path' => resource_path('views/vendor/korean-bbs/board/skins'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | 에디터 설정
+    |--------------------------------------------------------------------------
+    | default: 기본 글쓰기 에디터. trix, quill, tinymce, textarea를 제공합니다.
+    | skins: 스킨별 에디터 오버라이드. 예: ['gallery' => 'quill']
+    | allow_source_view: 기본 에디터에서 HTML 소스 편집 버튼 노출 여부.
+    | path: 앱에서 직접 만든 에디터 Blade 경로.
+    |       {path}/{editor}.blade.php 형태로 탐색합니다.
+    */
+    'editors' => [
+        'default' => 'trix',
+        'allow_source_view' => true,
+        'skins' => [
+            // 'gallery' => 'textarea',
+            'list' => 'tinymce',
+            'gallery' => 'quill',
+            // 'custom' => 'my-editor',
+        ],
+        'path' => resource_path('views/vendor/korean-bbs/editors'),
+        'allowed_tags' => [
+            'div', 'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'blockquote', 'pre', 'code',
+            'ul', 'ol', 'li', 'a', 'h1', 'h2', 'h3', 'h4', 'hr',
+        ],
+    ],
+
 ];
