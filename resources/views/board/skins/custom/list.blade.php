@@ -89,7 +89,9 @@
 
     {{-- 검색 & 페이지네이션 --}}
     <div class="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>{{ $posts->links() }}</div>
+        <div class="w-full md:w-auto">
+            <x-korean-bbs::pagination :paginator="$posts" />
+        </div>
         <form wire:submit.prevent class="flex gap-2">
             <select wire:model.live="searchType" class="text-sm border border-gray-300 rounded px-2 py-1">
                 <option value="title">제목</option>

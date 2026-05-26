@@ -75,8 +75,8 @@
 
     {{-- 검색 & 페이지네이션 --}}
     <div class="mt-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-            {{ $posts->links() }}
+        <div class="w-full md:w-auto">
+            <x-korean-bbs::pagination :paginator="$posts" />
         </div>
 
         <form wire:submit.prevent class="flex gap-2">

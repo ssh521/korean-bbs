@@ -54,7 +54,7 @@
             </tbody>
         </table>
         <div class="px-4 py-3 border-t border-gray-100">
-            {{ $comments->links() }}
+            <x-korean-bbs::pagination :paginator="$comments" variant="admin" />
         </div>
     </div>
 </div>

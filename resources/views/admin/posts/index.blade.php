@@ -69,7 +69,7 @@
             </tbody>
         </table>
         <div class="px-4 py-3 border-t border-gray-100">
-            {{ $posts->links() }}
+            <x-korean-bbs::pagination :paginator="$posts" variant="admin" />
         </div>
     </div>
 </div>
