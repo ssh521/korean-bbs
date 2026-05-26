@@ -65,6 +65,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | CAPTCHA 설정
+    |--------------------------------------------------------------------------
+    | 글 등록/수정 시 CAPTCHA를 사용합니다.
+    | guest_only가 true이면 비회원 작성자에게만 적용됩니다.
+    */
+    'captcha' => [
+        'enabled' => true,
+        'guest_only' => true,
+        'provider' => env('BBS_CAPTCHA_PROVIDER', 'math'), // math | turnstile | recaptcha
+        'min' => 1,
+        'max' => 9,
+        'turnstile' => [
+            'site_key' => env('BBS_TURNSTILE_SITE_KEY'),
+            'secret_key' => env('BBS_TURNSTILE_SECRET_KEY'),
+        ],
+        'recaptcha' => [
+            'site_key' => env('BBS_RECAPTCHA_SITE_KEY'),
+            'secret_key' => env('BBS_RECAPTCHA_SECRET_KEY'),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | 스킨 설정
     |--------------------------------------------------------------------------
     | allowed: 허용된 스킨 키 목록. 앱에서 config를 오버라이드해 추가 가능.

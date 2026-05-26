@@ -26,6 +26,11 @@ class PostForm extends Component
     public bool $isSecret = false;
     public string $authorName = '';
     public string $authorPassword = '';
+    public bool $captchaEnabled = false;
+    public string $captchaProvider = 'math';
+    public string $captchaQuestion = '';
+    public string $captchaAnswer = '';
+    public string $captchaToken = '';
 
     public array $uploadedFiles = [];
 
@@ -41,10 +46,19 @@ class PostForm extends Component
             $this->isSecret = $post->is_secret;
             $this->authorName = $post->author_name ?? '';
         }
+
+        $this->captchaEnabled = $this->shouldUseCaptcha();
+        $this->captchaProvider = $this->captchaProvider();
+
+        if ($this->captchaEnabled && $this->captchaProvider === 'math') {
+            $this->refreshCaptcha();
+        }
     }
 
     public function save(): void
     {
+        $captchaRequired = $this->shouldUseCaptcha();
+
         $rules = [
             'title'         => 'required|string|max:200',
             'content'       => 'required|string',
@@ -60,7 +74,39 @@ class PostForm extends Component
             $rules['authorPassword'] = 'required|string|min:4|max:20';
         }
 
-        $this->validate($rules);
+        if ($captchaRequired) {
+            if (in_array($this->captchaProvider(), ['turnstile', 'recaptcha'], true)) {
+                $rules['captchaToken'] = 'required|string';
+            } else {
+                $rules['captchaAnswer'] = 'required|string';
+            }
+        }
+
+        $this->validate($rules, [
+            'captchaAnswer.required' => '자동등록 방지 답을 입력하세요.',
+            'captchaToken.required' => '자동등록 방지를 완료하세요.',
+        ]);
+
+        if ($captchaRequired && !$this->captchaIsValid()) {
+            $field = in_array($this->captchaProvider(), ['turnstile', 'recaptcha'], true) ? 'captchaToken' : 'captchaAnswer';
+            $message = in_array($this->captchaProvider(), ['turnstile', 'recaptcha'], true)
+                ? '자동등록 방지 검증에 실패했습니다. 다시 시도하세요.'
+                : '자동등록 방지 답이 올바르지 않습니다.';
+
+            $this->addError($field, $message);
+            $this->captchaAnswer = '';
+            $this->captchaToken = '';
+
+            if ($this->captchaProvider() === 'math') {
+                $this->refreshCaptcha();
+            } elseif ($this->captchaProvider() === 'turnstile') {
+                $this->dispatch('korean-bbs-turnstile-reset');
+            } else {
+                $this->dispatch('korean-bbs-recaptcha-reset');
+            }
+
+            return;
+        }
 
         if (!auth()->check() && $this->post && !Hash::check($this->authorPassword, $this->post->getRawOriginal('author_password'))) {
             $this->addError('authorPassword', '비밀번호가 올바르지 않습니다.');
@@ -100,8 +146,25 @@ class PostForm extends Component
         }
 
         $this->handleFileUploads($savedPost);
+        session()->forget($this->captchaSessionKey());
 
         $this->redirect(route('bbs.posts.show', [$this->board->slug, $savedPost->id]));
+    }
+
+    public function refreshCaptcha(): void
+    {
+        $min = (int) config('korean-bbs.captcha.min', 1);
+        $max = (int) config('korean-bbs.captcha.max', 9);
+
+        if ($min > $max) {
+            [$min, $max] = [$max, $min];
+        }
+
+        $left = random_int($min, $max);
+        $right = random_int($min, $max);
+
+        $this->captchaQuestion = "{$left} + {$right}";
+        session()->put($this->captchaSessionKey(), (string) ($left + $right));
     }
 
     private function handleFileUploads(Post $post): void
@@ -139,6 +202,160 @@ class PostForm extends Component
                 $post->update(['thumbnail_path' => $storedName]);
             }
         }
+    }
+
+    private function shouldUseCaptcha(): bool
+    {
+        if (!config('korean-bbs.captcha.enabled', true)) {
+            return false;
+        }
+
+        if (!config('korean-bbs.captcha.guest_only', true)) {
+            return true;
+        }
+
+        return !auth()->check() && !session('bbs_admin_authenticated');
+    }
+
+    private function captchaIsValid(): bool
+    {
+        if ($this->captchaProvider() === 'turnstile') {
+            return $this->turnstileIsValid();
+        }
+
+        if ($this->captchaProvider() === 'recaptcha') {
+            return $this->recaptchaIsValid();
+        }
+
+        $expected = session($this->captchaSessionKey());
+
+        return is_string($expected) && hash_equals($expected, trim($this->captchaAnswer));
+    }
+
+    private function captchaSessionKey(): string
+    {
+        return 'korean-bbs.post-form-captcha.' . $this->board->id . '.' . ($this->post?->id ?? 'new');
+    }
+
+    private function captchaProvider(): string
+    {
+        $provider = config('korean-bbs.captcha.provider', 'math');
+
+        if (!in_array($provider, ['turnstile', 'recaptcha'], true)) {
+            return 'math';
+        }
+
+        if (!config("korean-bbs.captcha.{$provider}.site_key") || !config("korean-bbs.captcha.{$provider}.secret_key")) {
+            return 'math';
+        }
+
+        return $provider;
+    }
+
+    private function turnstileIsValid(): bool
+    {
+        $secretKey = config('korean-bbs.captcha.turnstile.secret_key');
+
+        if (!$secretKey || trim($this->captchaToken) === '') {
+            return false;
+        }
+
+        $response = $this->postTurnstileVerification($secretKey, $this->captchaToken);
+
+        return is_array($response) && ($response['success'] ?? false) === true;
+    }
+
+    private function recaptchaIsValid(): bool
+    {
+        $secretKey = config('korean-bbs.captcha.recaptcha.secret_key');
+
+        if (!$secretKey || trim($this->captchaToken) === '') {
+            return false;
+        }
+
+        $response = $this->postRecaptchaVerification($secretKey, $this->captchaToken);
+
+        return is_array($response) && ($response['success'] ?? false) === true;
+    }
+
+    private function postTurnstileVerification(string $secretKey, string $token): ?array
+    {
+        $payload = http_build_query([
+            'secret' => $secretKey,
+            'response' => $token,
+            'remoteip' => request()->ip(),
+        ]);
+
+        if (function_exists('curl_init')) {
+            $curl = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+            curl_setopt_array($curl, [
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => $payload,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 5,
+                CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded'],
+            ]);
+
+            $body = curl_exec($curl);
+            curl_close($curl);
+        } else {
+            $body = @file_get_contents('https://challenges.cloudflare.com/turnstile/v0/siteverify', false, stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+                    'content' => $payload,
+                    'timeout' => 5,
+                ],
+            ]));
+        }
+
+        if (!is_string($body) || $body === '') {
+            return null;
+        }
+
+        $decoded = json_decode($body, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    private function postRecaptchaVerification(string $secretKey, string $token): ?array
+    {
+        $payload = http_build_query([
+            'secret' => $secretKey,
+            'response' => $token,
+            'remoteip' => request()->ip(),
+        ]);
+
+        if (function_exists('curl_init')) {
+            $curl = curl_init('https://www.google.com/recaptcha/api/siteverify');
+            curl_setopt_array($curl, [
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => $payload,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 5,
+                CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded'],
+            ]);
+
+            $body = curl_exec($curl);
+            curl_close($curl);
+        } else {
+            $body = @file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+                    'content' => $payload,
+                    'timeout' => 5,
+                ],
+            ]));
+        }
+
+        if (!is_string($body) || $body === '') {
+            return null;
+        }
+
+        $decoded = json_decode($body, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 
     public function render()

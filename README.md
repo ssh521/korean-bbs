@@ -82,6 +82,7 @@ BBS_ADMIN_NAME=관리자
 - 타입: 일반(목록), 갤러리(썸네일 그리드)
 - 글 CRUD, 공지·비밀글, 비회원 글쓰기
 - 댓글·대댓글, 첨부(이미지 미리보기·썸네일), 추천/비추천
+- 글 등록·수정 CAPTCHA(수학 문제, Cloudflare Turnstile, Google reCAPTCHA)
 - Laravel 기본 인증·패키지 관리자(config·세션)
 
 ## 설정 개요
@@ -97,6 +98,7 @@ BBS_ADMIN_NAME=관리자
 | `defaults` | 페이지당 글·댓글·갤러리 개수 |
 | `skins` | 허용 스킨 키, 기본 스킨, 커스텀 스킨 경로 |
 | `editors` | 기본 글쓰기 에디터, 스킨별 에디터, 커스텀 에디터 경로 |
+| `captcha` | 글 등록·수정 CAPTCHA 사용 여부, 제공자, 비회원 전용 여부 |
 
 게시판별 공개 화면 폭은 관리자 게시판 설정의 `게시판 width`에서 지정할 수 있습니다.
 TailwindCSS 클래스와 CSS width 값을 모두 지원합니다.
@@ -165,6 +167,64 @@ php artisan vendor:publish --tag=korean-bbs-skins
 | `textarea` | 자바스크립트 에디터 없이 순수 textarea 사용 |
 
 커스텀 에디터는 `php artisan vendor:publish --tag=korean-bbs-editors`로 기본 에디터 뷰를 복사한 뒤, `resources/views/vendor/korean-bbs/editors/my-editor.blade.php`처럼 추가합니다. 에디터 Blade는 Livewire의 `content` 속성과 동기화되면 됩니다.
+
+## CAPTCHA
+
+글 작성·수정 폼에 자동등록 방지(CAPTCHA)를 적용할 수 있습니다. 설정은 `config/korean-bbs.php`의 `captcha` 항목에서 합니다.
+
+```php
+'captcha' => [
+    'enabled' => true,
+    'guest_only' => true,
+    'provider' => env('BBS_CAPTCHA_PROVIDER', 'math'),
+    'min' => 1,
+    'max' => 9,
+    'turnstile' => [
+        'site_key' => env('BBS_TURNSTILE_SITE_KEY'),
+        'secret_key' => env('BBS_TURNSTILE_SECRET_KEY'),
+    ],
+    'recaptcha' => [
+        'site_key' => env('BBS_RECAPTCHA_SITE_KEY'),
+        'secret_key' => env('BBS_RECAPTCHA_SECRET_KEY'),
+    ],
+],
+```
+
+| 항목 | 설명 |
+|------|------|
+| `enabled` | CAPTCHA 사용 여부 |
+| `guest_only` | `true`이면 비회원(패키지 관리자 세션 제외)에게만 적용 |
+| `provider` | `math`, `turnstile`, `recaptcha` 중 선택 |
+| `min`, `max` | `math` 제공자에서 덧셈 문제에 쓰는 숫자 범위 |
+
+제공자:
+
+| 키 | 설명 |
+|----|------|
+| `math` | 기본값. 외부 서비스 없이 덧셈 문제를 표시 |
+| `turnstile` | [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) |
+| `recaptcha` | [Google reCAPTCHA](https://www.google.com/recaptcha/) |
+
+`turnstile` 또는 `recaptcha`를 지정했는데 site key·secret key가 비어 있으면 자동으로 `math`로 대체됩니다.
+
+### 환경 변수
+
+외부 CAPTCHA를 쓸 때 `.env`에 키를 설정합니다.
+
+```env
+# math | turnstile | recaptcha
+BBS_CAPTCHA_PROVIDER=math
+
+# Cloudflare Turnstile
+BBS_TURNSTILE_SITE_KEY=
+BBS_TURNSTILE_SECRET_KEY=
+
+# Google reCAPTCHA
+BBS_RECAPTCHA_SITE_KEY=
+BBS_RECAPTCHA_SECRET_KEY=
+```
+
+CAPTCHA UI는 `resources/views/components/captcha.blade.php`에 있습니다. 스킨 폼에서 `@include('korean-bbs::components.captcha')`로 포함됩니다. 커스터마이징하려면 `php artisan vendor:publish --tag=korean-bbs-views` 후 해당 Blade를 수정하세요.
 
 ## 레이아웃 props
 

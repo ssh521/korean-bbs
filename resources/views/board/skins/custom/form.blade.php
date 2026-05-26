@@ -70,6 +70,8 @@
             </div>
         @endif
 
+        @include('korean-bbs::components.captcha')
+
         {{-- 버튼 --}}
         <div class="flex justify-between">
             <a href="{{ route('bbs.posts.index', $this->board->slug) }}"
