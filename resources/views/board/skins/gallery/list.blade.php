@@ -7,10 +7,12 @@
                 <p class="text-sm text-gray-500 mt-1">{{ $this->board->description }}</p>
             @endif
         </div>
-        <a href="{{ route('bbs.posts.create', [$this->board->slug]) }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-            글쓰기
-        </a>
+        @if($this->canWrite())
+            <a href="{{ route('bbs.posts.create', [$this->board->slug]) }}"
+               class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+                글쓰기
+            </a>
+        @endif
     </div>
 
     {{-- 공지글 --}}
@@ -19,8 +21,12 @@
             @foreach($notices as $notice)
                 <div class="flex items-center gap-2 py-1">
                     <span class="text-xs bg-red-500 text-white px-2 py-0.5 rounded">공지</span>
-                    <a href="{{ route('bbs.posts.show', [$this->board->slug, $notice->id]) }}"
-                       class="text-sm text-gray-700 hover:text-blue-600">{{ $notice->title }}</a>
+                    @if($this->canRead())
+                        <a href="{{ route('bbs.posts.show', [$this->board->slug, $notice->id]) }}"
+                           class="text-sm text-gray-700 hover:text-blue-600">{{ $notice->title }}</a>
+                    @else
+                        <span class="text-sm text-gray-500">{{ $notice->title }}</span>
+                    @endif
                 </div>
             @endforeach
         </div>
@@ -29,8 +35,12 @@
     {{-- 갤러리 그리드 --}}
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @forelse($posts as $post)
-            <a href="{{ route('bbs.posts.show', [$this->board->slug, $post->id]) }}"
-               class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md hover:border-blue-300 transition group">
+            @if($this->canRead())
+                <a href="{{ route('bbs.posts.show', [$this->board->slug, $post->id]) }}"
+                   class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md hover:border-blue-300 transition group">
+            @else
+                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden group">
+            @endif
                 {{-- 썸네일 --}}
                 <div class="aspect-square bg-gray-100 overflow-hidden">
                     @if($post->thumbnail_path)
@@ -59,7 +69,11 @@
                         <div class="text-xs text-blue-500 mt-1">댓글 {{ $post->all_comments_count }}</div>
                     @endif
                 </div>
-            </a>
+            @if($this->canRead())
+                </a>
+            @else
+                </div>
+            @endif
         @empty
             <div class="col-span-full text-center text-gray-400 py-16 text-sm">
                 첫 번째 게시글을 작성해보세요.

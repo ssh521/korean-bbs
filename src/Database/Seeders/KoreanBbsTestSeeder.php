@@ -70,9 +70,14 @@ class KoreanBbsTestSeeder extends Seeder
             $board = Board::updateOrCreate(
                 ['slug' => $boardData['slug']],
                 array_merge([
+                    'list_level' => 0,
+                    'read_level' => 0,
                     'write_level' => 0,
                     'comment_level' => 0,
                     'file_level' => 0,
+                    'upload_level' => 0,
+                    'download_level' => 0,
+                    'like_level' => 0,
                     'posts_per_page' => 10,
                     'allow_secret' => false,
                     'use_comment' => true,

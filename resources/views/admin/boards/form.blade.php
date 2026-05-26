@@ -76,18 +76,27 @@
             {{-- 권한 설정 --}}
             <div class="border border-gray-200 rounded-lg p-4">
                 <div class="text-xs font-medium text-gray-600 mb-3">권한 설정</div>
-                <div class="grid grid-cols-3 gap-3">
-                    @foreach([['label' => '글쓰기', 'model' => 'writeLevel'], ['label' => '댓글', 'model' => 'commentLevel'], ['label' => '파일', 'model' => 'fileLevel']] as $perm)
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    @foreach([
+                        ['label' => '목록', 'model' => 'listLevel'],
+                        ['label' => '상세보기', 'model' => 'readLevel'],
+                        ['label' => '글쓰기', 'model' => 'writeLevel'],
+                        ['label' => '댓글', 'model' => 'commentLevel'],
+                        ['label' => '파일 업로드', 'model' => 'uploadLevel'],
+                        ['label' => '파일 다운로드', 'model' => 'downloadLevel'],
+                        ['label' => '추천/비추천', 'model' => 'likeLevel'],
+                    ] as $perm)
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">{{ $perm['label'] }} 권한</label>
-                            <select wire:model="{{ $perm['model'] }}"
-                                    class="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none">
-                                <option value="0">비회원 가능</option>
-                                <option value="1">회원 필요</option>
-                            </select>
+                            <label class="block text-xs text-gray-500 mb-1">{{ $perm['label'] }}</label>
+                            <input type="number"
+                                   wire:model="{{ $perm['model'] }}"
+                                   min="0"
+                                   max="10"
+                                   class="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none">
                         </div>
                     @endforeach
                 </div>
+                <p class="text-xs text-gray-400 mt-2">0=비회원, 1=회원, 10=관리자 기준입니다. 앱 등급 연동 시 숫자 레벨을 그대로 사용합니다.</p>
             </div>
 
             {{-- 기타 설정 --}}

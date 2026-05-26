@@ -2,8 +2,8 @@
 
 namespace Ssh521\KoreanBbs\Http\Livewire\Board;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Ssh521\KoreanBbs\EditorResolver;
@@ -38,6 +38,10 @@ class PostForm extends Component
     {
         $this->board = Board::where('slug', $boardSlug)->where('is_active', true)->firstOrFail();
 
+        if (!$post || !$post->exists) {
+            Gate::authorize('korean-bbs.write', $this->board);
+        }
+
         if ($post && $post->exists) {
             $this->post    = $post;
             $this->title   = $post->title;
@@ -57,6 +61,14 @@ class PostForm extends Component
 
     public function save(): void
     {
+        if (!$this->post) {
+            Gate::authorize('korean-bbs.write', $this->board);
+        }
+
+        if (!empty($this->uploadedFiles)) {
+            Gate::authorize('korean-bbs.upload-file', $this->board);
+        }
+
         $captchaRequired = $this->shouldUseCaptcha();
 
         $rules = [
@@ -167,11 +179,18 @@ class PostForm extends Component
         session()->put($this->captchaSessionKey(), (string) ($left + $right));
     }
 
+    public function canUploadFile(): bool
+    {
+        return Gate::allows('korean-bbs.upload-file', $this->board);
+    }
+
     private function handleFileUploads(Post $post): void
     {
         if (empty($this->uploadedFiles)) {
             return;
         }
+
+        Gate::authorize('korean-bbs.upload-file', $this->board);
 
         $disk        = config('korean-bbs.upload.disk');
         $basePath    = config('korean-bbs.upload.path');

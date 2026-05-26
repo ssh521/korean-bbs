@@ -2,6 +2,7 @@
 
 namespace Ssh521\KoreanBbs\Http\Livewire\Board;
 
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -24,11 +25,23 @@ class PostList extends Component
     public function mount(string $boardSlug): void
     {
         $this->board = Board::where('slug', $boardSlug)->where('is_active', true)->firstOrFail();
+
+        Gate::authorize('korean-bbs.list', $this->board);
     }
 
     public function updatedSearch(): void
     {
         $this->resetPage();
+    }
+
+    public function canWrite(): bool
+    {
+        return Gate::allows('korean-bbs.write', $this->board);
+    }
+
+    public function canRead(): bool
+    {
+        return Gate::allows('korean-bbs.read', $this->board);
     }
 
     public function render()

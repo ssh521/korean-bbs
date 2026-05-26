@@ -3,6 +3,7 @@
 namespace Ssh521\KoreanBbs\Http\Livewire\Board;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Ssh521\KoreanBbs\EditorResolver;
 use Ssh521\KoreanBbs\Models\Board;
@@ -30,6 +31,7 @@ class PostShow extends Component
     {
         $this->board = Board::where('slug', $boardSlug)->where('is_active', true)->firstOrFail();
         abort_if($post->board_id !== $this->board->id, 404);
+        Gate::authorize('korean-bbs.read', $this->board);
         $this->post = $post;
 
         if (!$post->is_secret) {
@@ -50,6 +52,8 @@ class PostShow extends Component
 
     public function submitComment(): void
     {
+        Gate::authorize('korean-bbs.comment', $this->board);
+
         $rules = ['commentContent' => 'required|string|max:2000'];
 
         if (!auth()->check()) {
@@ -83,8 +87,27 @@ class PostShow extends Component
         $this->replyToId = $commentId;
     }
 
+    public function canComment(): bool
+    {
+        return Gate::allows('korean-bbs.comment', $this->board);
+    }
+
+    public function canLike(): bool
+    {
+        return Gate::allows('korean-bbs.like', $this->board);
+    }
+
+    public function canDownloadFile(): bool
+    {
+        $file = $this->post->files->first();
+
+        return $file && Gate::allows('korean-bbs.download-file', $file);
+    }
+
     public function toggleLike(string $type): void
     {
+        Gate::authorize('korean-bbs.like', $this->board);
+
         $userId = auth()->id();
         $ip     = request()->ip();
 

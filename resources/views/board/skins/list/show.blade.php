@@ -42,7 +42,7 @@
         </div>
 
         {{-- 첨부파일 --}}
-        @if($this->post->files->isNotEmpty())
+        @if($this->post->files->isNotEmpty() && $this->canDownloadFile())
             <div class="px-6 py-3 border-b border-gray-100 bg-gray-50">
                 <div class="text-xs text-gray-500 font-medium mb-2">첨부파일</div>
                 <div class="flex flex-wrap gap-2">
@@ -69,7 +69,7 @@
 
         {{-- 이미지 미리보기 --}}
         @php $images = $this->post->files->where('is_image', true); @endphp
-        @if($images->isNotEmpty())
+        @if($images->isNotEmpty() && $this->canDownloadFile())
             <div class="px-6 pb-4 flex flex-wrap gap-3">
                 @foreach($images as $img)
                     <img src="{{ $img->url() }}" alt="{{ $img->original_name }}"
@@ -80,7 +80,7 @@
         @endif
 
         {{-- 추천/비추천 --}}
-        @if($this->board->use_like)
+        @if($this->canLike())
             <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-center gap-4">
                 <button wire:click="toggleLike('like')"
                         class="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-blue-400 text-blue-600 hover:bg-blue-50 transition font-medium text-sm">
@@ -131,6 +131,7 @@
             </div>
 
             {{-- 댓글 작성 폼 --}}
+            @if($this->canComment())
             <div class="mt-4 bg-white border border-gray-200 rounded-xl p-4">
                 @if($replyToId)
                     <div class="flex items-center gap-2 mb-3 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded-lg">
@@ -166,6 +167,7 @@
                     </button>
                 </div>
             </div>
+            @endif
         </div>
     @endif
 

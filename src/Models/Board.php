@@ -12,7 +12,8 @@ class Board extends Model
 
     protected $fillable = [
         'group_id', 'name', 'slug', 'description', 'skin', 'width',
-        'write_level', 'comment_level', 'file_level',
+        'list_level', 'read_level', 'write_level', 'comment_level',
+        'file_level', 'upload_level', 'download_level', 'like_level',
         'posts_per_page', 'allow_secret', 'use_comment',
         'use_like', 'use_file', 'is_active', 'order',
     ];

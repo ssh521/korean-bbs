@@ -7,10 +7,12 @@
                 <p class="text-sm text-gray-500 mt-1">{{ $this->board->description }}</p>
             @endif
         </div>
-        <a href="{{ route('bbs.posts.create', [$this->board->slug]) }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-            글쓰기
-        </a>
+        @if($this->canWrite())
+            <a href="{{ route('bbs.posts.create', [$this->board->slug]) }}"
+               class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+                글쓰기
+            </a>
+        @endif
     </div>
 
     {{-- 공지글 --}}
@@ -19,10 +21,14 @@
             @foreach($notices as $notice)
                 <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-100 last:border-0 bg-yellow-50">
                     <span class="text-xs bg-red-500 text-white px-2 py-0.5 rounded font-medium flex-shrink-0">공지</span>
-                    <a href="{{ route('bbs.posts.show', [$this->board->slug, $notice->id]) }}"
-                       class="flex-1 text-sm font-medium text-gray-800 hover:text-blue-600 truncate">
-                        {{ $notice->title }}
-                    </a>
+                    @if($this->canRead())
+                        <a href="{{ route('bbs.posts.show', [$this->board->slug, $notice->id]) }}"
+                           class="flex-1 text-sm font-medium text-gray-800 hover:text-blue-600 truncate">
+                            {{ $notice->title }}
+                        </a>
+                    @else
+                        <span class="flex-1 text-sm font-medium text-gray-500 truncate">{{ $notice->title }}</span>
+                    @endif
                     <span class="text-xs text-gray-400 flex-shrink-0">{{ $notice->created_at->format('Y.m.d') }}</span>
                 </div>
             @endforeach
@@ -45,8 +51,12 @@
             <div class="grid grid-cols-12 gap-2 px-4 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition items-center">
                 <div class="hidden md:block col-span-1 text-center text-xs text-gray-400">{{ $post->id }}</div>
                 <div class="col-span-9 md:col-span-6">
-                    <a href="{{ route('bbs.posts.show', [$this->board->slug, $post->id]) }}"
-                       class="text-sm text-gray-800 hover:text-blue-600 font-medium">
+                    @if($this->canRead())
+                        <a href="{{ route('bbs.posts.show', [$this->board->slug, $post->id]) }}"
+                           class="text-sm text-gray-800 hover:text-blue-600 font-medium">
+                    @else
+                        <span class="text-sm text-gray-500 font-medium">
+                    @endif
                         @if($post->is_secret)
                             <span class="text-gray-400">[비밀글]</span>
                         @endif
@@ -54,7 +64,11 @@
                         @if($post->all_comments_count > 0)
                             <span class="text-blue-500 text-xs ml-1">[{{ $post->all_comments_count }}]</span>
                         @endif
-                    </a>
+                    @if($this->canRead())
+                        </a>
+                    @else
+                        </span>
+                    @endif
                     @if($post->files->isNotEmpty() ?? false)
                         <span class="ml-1 text-gray-400">📎</span>
                     @endif

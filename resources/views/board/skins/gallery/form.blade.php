@@ -55,7 +55,7 @@
         </div>
 
         {{-- 파일 첨부 --}}
-        @if($this->board->use_file)
+        @if($this->canUploadFile())
             <div class="mb-6">
                 <label class="block text-xs font-medium text-gray-600 mb-1">파일 첨부</label>
                 <input type="file" wire:model="uploadedFiles"

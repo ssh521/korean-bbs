@@ -7,10 +7,12 @@
                 <p class="text-sm text-gray-500 mt-1">{{ $this->board->description }}</p>
             @endif
         </div>
-        <a href="{{ route('bbs.posts.create', [$this->board->slug]) }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-            글쓰기
-        </a>
+        @if($this->canWrite())
+            <a href="{{ route('bbs.posts.create', [$this->board->slug]) }}"
+               class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+                글쓰기
+            </a>
+        @endif
     </div>
 
     {{-- 공지글 --}}
@@ -19,10 +21,14 @@
             @foreach($notices as $notice)
                 <div class="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2">
                     <span class="text-xs bg-red-500 text-white px-2 py-0.5 rounded font-medium flex-shrink-0">공지</span>
-                    <a href="{{ route('bbs.posts.show', [$this->board->slug, $notice->id]) }}"
-                       class="flex-1 text-sm font-medium text-gray-800 hover:text-blue-600 truncate">
-                        {{ $notice->title }}
-                    </a>
+                    @if($this->canRead())
+                        <a href="{{ route('bbs.posts.show', [$this->board->slug, $notice->id]) }}"
+                           class="flex-1 text-sm font-medium text-gray-800 hover:text-blue-600 truncate">
+                            {{ $notice->title }}
+                        </a>
+                    @else
+                        <span class="flex-1 text-sm font-medium text-gray-500 truncate">{{ $notice->title }}</span>
+                    @endif
                     <span class="text-xs text-gray-400 flex-shrink-0">{{ $notice->created_at->format('Y.m.d') }}</span>
                 </div>
             @endforeach
@@ -32,8 +38,12 @@
     {{-- 카드 피드 목록 --}}
     <div class="space-y-3">
         @forelse($posts as $post)
-            <a href="{{ route('bbs.posts.show', [$this->board->slug, $post->id]) }}"
-               class="flex gap-4 bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-sm transition group">
+            @if($this->canRead())
+                <a href="{{ route('bbs.posts.show', [$this->board->slug, $post->id]) }}"
+                   class="flex gap-4 bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-sm transition group">
+            @else
+                <div class="flex gap-4 bg-white border border-gray-200 rounded-xl p-4 group">
+            @endif
 
                 {{-- 썸네일 (있을 때만) --}}
                 @if($post->thumbnail_path)
@@ -79,7 +89,11 @@
                         @endif
                     </div>
                 </div>
-            </a>
+            @if($this->canRead())
+                </a>
+            @else
+                </div>
+            @endif
         @empty
             <div class="text-center text-gray-400 py-16 text-sm bg-white border border-gray-200 rounded-xl">
                 첫 번째 게시글을 작성해보세요.

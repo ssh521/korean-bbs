@@ -2,6 +2,8 @@
 
 namespace Ssh521\KoreanBbs;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -14,6 +16,9 @@ use Ssh521\KoreanBbs\Http\Livewire\Board\BoardIndex;
 use Ssh521\KoreanBbs\Http\Livewire\Board\PostForm;
 use Ssh521\KoreanBbs\Http\Livewire\Board\PostList;
 use Ssh521\KoreanBbs\Http\Livewire\Board\PostShow;
+use Ssh521\KoreanBbs\Models\BbsFile;
+use Ssh521\KoreanBbs\Models\Board;
+use Ssh521\KoreanBbs\Support\Authorization;
 
 class KoreanBbsServiceProvider extends ServiceProvider
 {
@@ -33,9 +38,50 @@ class KoreanBbsServiceProvider extends ServiceProvider
 
         $this->registerRoutes();
 
+        $this->registerGates();
         $this->registerMiddleware();
         $this->registerLivewireComponents();
         $this->registerPublishables();
+    }
+
+    private function registerGates(): void
+    {
+        Gate::define('korean-bbs.list', function (?Authenticatable $user, Board $board): bool {
+            return $board->is_active && Authorization::hasLevel($user, (int) $board->list_level);
+        });
+
+        Gate::define('korean-bbs.read', function (?Authenticatable $user, Board $board): bool {
+            return $board->is_active && Authorization::hasLevel($user, (int) $board->read_level);
+        });
+
+        Gate::define('korean-bbs.write', function (?Authenticatable $user, Board $board): bool {
+            return $board->is_active && Authorization::hasLevel($user, (int) $board->write_level);
+        });
+
+        Gate::define('korean-bbs.comment', function (?Authenticatable $user, Board $board): bool {
+            return $board->is_active
+                && $board->use_comment
+                && Authorization::hasLevel($user, (int) $board->comment_level);
+        });
+
+        Gate::define('korean-bbs.upload-file', function (?Authenticatable $user, Board $board): bool {
+            return $board->is_active
+                && $board->use_file
+                && Authorization::hasLevel($user, (int) $board->upload_level);
+        });
+
+        Gate::define('korean-bbs.download-file', function (?Authenticatable $user, BbsFile $file): bool {
+            $board = $file->post?->board;
+
+            return $board?->is_active === true
+                && Authorization::hasLevel($user, (int) $board->download_level);
+        });
+
+        Gate::define('korean-bbs.like', function (?Authenticatable $user, Board $board): bool {
+            return $board->is_active
+                && $board->use_like
+                && Authorization::hasLevel($user, (int) $board->like_level);
+        });
     }
 
     private function registerRoutes(): void

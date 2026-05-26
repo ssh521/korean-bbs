@@ -93,12 +93,16 @@ BBS_ADMIN_NAME=관리자
 |------|------|
 | `layout` | 공개 페이지 Blade 레이아웃 (예: `layouts.app`으로 교체) |
 | `admin` | `.env`의 `BBS_ADMIN_*`와 연동되는 관리자 계정 |
+| `auth` | 게시판별 글쓰기·댓글·파일 권한 레벨 해석 방식 |
 | `prefix` | 웹·관리자 URL 접두사 |
 | `upload` | 디스크, 경로, 최대 크기(KB), 허용 확장자, 썸네일 크기 |
 | `defaults` | 페이지당 글·댓글·갤러리 개수 |
 | `skins` | 허용 스킨 키, 기본 스킨, 커스텀 스킨 경로 |
 | `editors` | 기본 글쓰기 에디터, 스킨별 에디터, 커스텀 에디터 경로 |
 | `captcha` | 글 등록·수정 CAPTCHA 사용 여부, 제공자, 비회원 전용 여부 |
+
+게시판 권한은 관리자 화면의 `list_level`, `read_level`, `write_level`, `comment_level`, `upload_level`, `download_level`, `like_level` 값을 기준으로 동작합니다.
+기본값은 비회원 `0`, 로그인 회원 `1`, 관리자 `10`이며, 앱의 회원 등급 체계가 다르면 `auth.level_resolver` 또는 `auth.admin_resolver`를 설정해 연결할 수 있습니다.
 
 게시판별 공개 화면 폭은 관리자 게시판 설정의 `게시판 width`에서 지정할 수 있습니다.
 TailwindCSS 클래스와 CSS width 값을 모두 지원합니다.
