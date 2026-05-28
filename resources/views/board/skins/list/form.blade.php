@@ -24,7 +24,6 @@
 
         {{-- 제목 --}}
         <div class="mb-4">
-            <label class="block text-xs font-medium text-gray-600 mb-1">제목 <span class="text-red-500">*</span></label>
             <input type="text" wire:model="title"
                    placeholder="제목을 입력하세요"
                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 @error('title') border-red-400 @enderror">
@@ -49,7 +48,6 @@
 
         {{-- 내용 --}}
         <div class="mb-4">
-            <label class="block text-xs font-medium text-gray-600 mb-1">내용 <span class="text-red-500">*</span></label>
             @include($editorView ?? 'korean-bbs::editors.textarea')
             @error('content') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
