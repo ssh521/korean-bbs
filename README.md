@@ -137,7 +137,7 @@ php artisan vendor:publish --tag=korean-bbs-skins
 
 ```php
 'skins' => [
-    'allowed' => ['list', 'gallery', 'custom', 'my-skin'],
+    'allowed' => ['list', 'gallery', 'custom', 'blog', 'my-skin'],
     'default' => 'list',
     'path' => resource_path('views/bbs/skins'),
 ],
@@ -155,6 +155,7 @@ php artisan vendor:publish --tag=korean-bbs-skins
     'allow_source_view' => true,
     'skins' => [
         'gallery' => 'quill',
+        'blog' => 'tinymce',
         'custom' => 'my-editor',
     ],
     'path' => resource_path('views/vendor/korean-bbs/editors'),

@@ -111,7 +111,7 @@ return [
     |       {path}/{skin}/{list|show|form}.blade.php 형태로 탐색합니다.
     */
     'skins' => [
-        'allowed' => ['list', 'gallery', 'custom'],
+        'allowed' => ['list', 'gallery', 'custom', 'blog'],
         'default' => 'list',
         'path' => resource_path('views/vendor/korean-bbs/board/skins'),
     ],
@@ -133,6 +133,7 @@ return [
             // 'gallery' => 'textarea',
             'list' => 'tinymce',
             'gallery' => 'quill',
+            'blog' => 'tinymce',
             // 'custom' => 'my-editor',
         ],
         'path' => resource_path('views/vendor/korean-bbs/editors'),
